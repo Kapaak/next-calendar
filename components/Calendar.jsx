@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import locale from "dayjs/locale/cs";
+import locale, { weekdays } from "dayjs/locale/cs";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import arrayPlugin from "dayjs/plugin/toObject";
 
@@ -65,59 +65,96 @@ const Calendar = () => {
 		let days = [];
 
 		//loop over all days in month
-		for (let i = 0; i <= arrayOfDays.length; i++) {
-			days.push(
-				<div className={`col cell`} key={i}>
-					<span className="number">{arrayOfDays[i]?.format("ddd DD")}</span>
-					<span className="bg">{arrayOfDays[i]?.format("ddd DD")}</span>
-				</div>
-			);
+		// for (let i = 0; i <= arrayOfDays.length; i++) {
+		// 	days.push(
+		// 		<div className={`col cell`} key={i}>
+		// 			<span className="number">{arrayOfDays[i]?.format("ddd DD")}</span>
+		// 			<span className="bg">{arrayOfDays[i]?.format("ddd DD")}</span>
+		// 		</div>
+		// 	);
 
-			//put 7 items in a row
-			// if (i % 7 === 0) {
+		// 	//put 7 items in a row
+		// 	// if (i % 7 === 0) {
+		// 	rows.push(
+		// 		<div className="row" key={i}>
+		// 			{days}
+		// 		</div>
+		// 	);
+		// 	days = [];
+		// 	// }
+		// }
+
+		arrayOfDays.forEach((week, index) => {
+			week.dates.forEach((d, i) => {
+				days.push(
+					<div className={`col cell`} key={i}>
+						<span className="number">{d.format("ddd DD")}</span>
+						<span className="bg">{d.format("ddd DD")}</span>
+					</div>
+				);
+			});
 			rows.push(
-				<div className="row" key={i}>
+				<div className="row" key={index}>
 					{days}
 				</div>
 			);
 			days = [];
-			// }
-		}
+		});
+
 		//dopln pred a po okna
 		return <div className="body">{rows}</div>;
 	};
 
 	const getAllDays = () => {
-		let days = [];
-		const daysInMonth = now.month(currentMonth).daysInMonth();
+		let currentDate = now.startOf("month").month(currentMonth).weekday(0);
+		let lastDate = now.endOf("month").month(currentMonth).weekday(0);
+		let allDates = [];
+		let weekDates = [];
 
-		const dateOfMonth = date => {
-			const monthStart = now.startOf("month");
-			return monthStart.month(currentMonth).date(date);
-		};
+		let j = 0;
+		let weekCounter = 1;
+		let nextDate = "";
 
-		const beforeFirstDay = +dateOfMonth(1).format("d");
+		while (currentDate < lastDate) {
+			nextDate = now
+				.startOf("month")
+				.month(currentMonth)
+				.weekday(j + 1);
 
-		console.log(beforeFirstDay, "before");
+			weekDates.push(currentDate);
 
-		//if first day is !== pondeli, pak musim vygenerovat dny z predchoziho mesice
-		for (let i = 1; i < beforeFirstDay; i++) {
-			let j = i;
-			days.push(dateOfMonth(--j));
+			if (nextDate.date() === lastDate.date()) {
+				//add last week which might include months from another month
+				for (let i = 0; i < 7; i++) {
+					weekDates.push(now.endOf("month").month(currentMonth).weekday(i));
+				}
+
+				allDates.push({ dates: weekDates });
+				weekDates = [];
+				weekCounter = 0;
+			}
+
+			if (weekCounter === 7) {
+				allDates.push({ dates: weekDates });
+				weekDates = [];
+				weekCounter = 0;
+			}
+
+			j++;
+			weekCounter++;
+			currentDate = now.startOf("month").month(currentMonth).weekday(j);
 		}
 
-		//add all dates to the array
-		for (let i = 1; i <= daysInMonth; i++) {
-			days.push(dateOfMonth(i));
-		}
+		// console.log(allDates, "all dates");
 
-		setArrayOfDays(days);
-		days = [];
+		// setArrayOfDays(days);
+		// days = [];
+
+		setArrayOfDays(allDates);
 	};
 
 	useEffect(() => {
 		getAllDays();
-		console.log("initial fetch");
 	}, []);
 
 	useEffect(() => {
