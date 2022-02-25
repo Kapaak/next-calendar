@@ -64,26 +64,6 @@ const Calendar = () => {
 		const rows = [];
 		let days = [];
 
-		//loop over all days in month
-		// for (let i = 0; i <= arrayOfDays.length; i++) {
-		// 	days.push(
-		// 		<div className={`col cell`} key={i}>
-		// 			<span className="number">{arrayOfDays[i]?.format("ddd DD")}</span>
-		// 			<span className="bg">{arrayOfDays[i]?.format("ddd DD")}</span>
-		// 		</div>
-		// 	);
-
-		// 	//put 7 items in a row
-		// 	// if (i % 7 === 0) {
-		// 	rows.push(
-		// 		<div className="row" key={i}>
-		// 			{days}
-		// 		</div>
-		// 	);
-		// 	days = [];
-		// 	// }
-		// }
-
 		arrayOfDays.forEach((week, index) => {
 			week.dates.forEach((d, i) => {
 				days.push(
@@ -101,7 +81,6 @@ const Calendar = () => {
 			days = [];
 		});
 
-		//dopln pred a po okna
 		return <div className="body">{rows}</div>;
 	};
 
@@ -145,28 +124,25 @@ const Calendar = () => {
 			currentDate = now.startOf("month").month(currentMonth).weekday(j);
 		}
 
-		// console.log(allDates, "all dates");
-
-		// setArrayOfDays(days);
-		// days = [];
-
 		setArrayOfDays(allDates);
 	};
 
-	useEffect(() => {
-		getAllDays();
-	}, []);
+	// useEffect(() => {
+	// 	getAllDays();
+	// }, []);
 
 	useEffect(() => {
 		getAllDays();
 	}, [currentMonth]);
+
+	//TODO
+	//jeste musim ukladat do toho arrayOfDays jestli to je predchozi mesic
 
 	return (
 		<div className="calendar">
 			{renderHeader()}
 			{renderDays()}
 			{renderCells()}
-			<button onClick={() => console.log(arrayOfDays)}>see all days</button>
 		</div>
 	);
 };
