@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import locale, { weekdays } from "dayjs/locale/cs";
+import locale from "dayjs/locale/cs";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import arrayPlugin from "dayjs/plugin/toObject";
 
@@ -68,8 +68,8 @@ const Calendar = () => {
 			week.dates.forEach((d, i) => {
 				days.push(
 					<div className={`col cell`} key={i}>
-						<span className="number">{d.format("ddd DD")}</span>
-						<span className="bg">{d.format("ddd DD")}</span>
+						<span className="number">{d.day}</span>
+						<span className="bg">{d.day}</span>
 					</div>
 				);
 			});
@@ -82,6 +82,19 @@ const Calendar = () => {
 		});
 
 		return <div className="body">{rows}</div>;
+	};
+
+	const formateDateObject = dateObject => {
+		const clonedObject = { ...dateObject };
+
+		const formatedObject = {
+			day: clonedObject.date,
+			month: clonedObject.months,
+			year: clonedObject.years,
+			thisMonth: clonedObject.months === currentMonth,
+		};
+
+		return formatedObject;
 	};
 
 	const getAllDays = () => {
@@ -100,23 +113,46 @@ const Calendar = () => {
 				.month(currentMonth)
 				.weekday(j + 1);
 
-			weekDates.push(currentDate);
+			// const currentDateObject = currentDate.clone().toObject();
+
+			// const currentDateFormated = {
+			// 	day: currentDateObject.date,
+			// 	month: currentDateObject.months,
+			// 	year: currentDateObject.years,
+			// 	thisMonth: currentDateObject.months === currentMonth,
+			// };
+
+			// formateDateObject(currentDate.toObject());
+
+			const formated = formateDateObject(currentDate.toObject());
+
+			weekDates.push(formated);
+
+			// weekDates.push(currentDate);
+
+			const pushWeekDates = () => {
+				allDates.push({ dates: weekDates });
+				weekDates = [];
+				weekCounter = 0;
+			};
 
 			if (nextDate.date() === lastDate.date()) {
 				//add last week which might include months from another month
-				for (let i = 0; i < 7; i++) {
-					weekDates.push(now.endOf("month").month(currentMonth).weekday(i));
-				}
 
-				allDates.push({ dates: weekDates });
-				weekDates = [];
-				weekCounter = 0;
+				for (let i = 0; i < 7; i++) {
+					const dateObject = now.endOf("month").month(currentMonth).weekday(i);
+
+					const formated = formateDateObject(dateObject.toObject());
+
+					weekDates.push(formated);
+
+					// weekDates.push(now.endOf("month").month(currentMonth).weekday(i));
+				}
+				pushWeekDates();
 			}
 
 			if (weekCounter === 7) {
-				allDates.push({ dates: weekDates });
-				weekDates = [];
-				weekCounter = 0;
+				pushWeekDates();
 			}
 
 			j++;
@@ -127,16 +163,13 @@ const Calendar = () => {
 		setArrayOfDays(allDates);
 	};
 
-	// useEffect(() => {
-	// 	getAllDays();
-	// }, []);
-
 	useEffect(() => {
 		getAllDays();
 	}, [currentMonth]);
 
 	//TODO
-	//jeste musim ukladat do toho arrayOfDays jestli to je predchozi mesic
+	//1. musim ukladat do toho arrayOfDays jestli to je predchozi mesic
+	//2. musim nejak globalne pridavat data do toho calendare
 
 	return (
 		<div className="calendar">
