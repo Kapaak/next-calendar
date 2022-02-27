@@ -106,18 +106,24 @@ const Calendar = () => {
 		let j = 0;
 		let weekCounter = 1;
 
+		// console.log(
+		// 	now.endOf("month").month(currentMonth).weekday(7).toObject(),
+		// 	"last date"
+		// );
+		// console.log(
+		// 	now.endOf("month").month(currentMonth).weekday(6).toObject(),
+		// 	"last date rly"
+		// );
+
 		const pushWeekDates = () => {
 			allDates.push({ dates: weekDates });
 			weekDates = [];
 			weekCounter = 0;
 		};
 
-		console.log(
-			now.endOf("month").month(currentMonth).day(7).toObject(),
-			"last"
-		);
-
-		while (currentDate <= lastDate) {
+		// pokud zacatek tydne neni uz jinej mesic, nez je vybranej, pak vim, ze uz nemam zobrazit
+		// kdyz prvni den tydne dostanu element s mesicem vetsim, nez je ten nynejsi, pak nezobrazuji
+		while (currentDate.weekday(0).toObject().months !== currentMonth + 1) {
 			const formated = formateDateObject(currentDate.toObject());
 
 			weekDates.push(formated);
@@ -130,6 +136,31 @@ const Calendar = () => {
 			weekCounter++;
 			currentDate = now.startOf("month").month(currentMonth).weekday(j);
 		}
+
+		// while (currentDate <= lastDate) {
+		// 	console.log(currentDate.weekday(0).toObject().months);
+
+		// 	// if (j % 7 === 0) console.log(currentDate.toObject().months, "mon");
+		// 	//ta podminka ale ma bejt nad timhle .. nejde pouzit for loop ?
+
+		// 	// co ale upravit jen lastDate a pokud firstDate je pondeli 1. , pak vypisu last date o tyden posunuty ... a pak bude i ta podminka logictejsi
+
+		// 	const formated = formateDateObject(currentDate.toObject());
+
+		// 	weekDates.push(formated);
+
+		// 	//kdyz mesic zacina 1 na pondeli, tak to neprojde posledni tyden
+		// 	//dej tam podminku, ktera kdyz je prvni den pondeli 1. jeste zkoukne, jestli v +1 elementu je ten stejnej mesic
+		// 	//pokud je, tak vypis celej tyden jeste
+
+		// 	if (weekCounter === 7) {
+		// 		pushWeekDates();
+		// 	}
+
+		// 	j++;
+		// 	weekCounter++;
+		// 	currentDate = now.startOf("month").month(currentMonth).weekday(j);
+		// }
 
 		setArrayOfDays(allDates);
 	};
