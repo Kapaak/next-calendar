@@ -99,57 +99,28 @@ const Calendar = () => {
 
 	const getAllDays = () => {
 		let currentDate = now.startOf("month").month(currentMonth).weekday(0);
-		let lastDate = now.endOf("month").month(currentMonth).weekday(0);
+		let lastDate = now.endOf("month").month(currentMonth).day(7);
 		let allDates = [];
 		let weekDates = [];
 
 		let j = 0;
 		let weekCounter = 1;
-		let nextDate = "";
 
-		while (currentDate < lastDate) {
-			nextDate = now
-				.startOf("month")
-				.month(currentMonth)
-				.weekday(j + 1);
+		const pushWeekDates = () => {
+			allDates.push({ dates: weekDates });
+			weekDates = [];
+			weekCounter = 0;
+		};
 
-			// const currentDateObject = currentDate.clone().toObject();
+		console.log(
+			now.endOf("month").month(currentMonth).day(7).toObject(),
+			"last"
+		);
 
-			// const currentDateFormated = {
-			// 	day: currentDateObject.date,
-			// 	month: currentDateObject.months,
-			// 	year: currentDateObject.years,
-			// 	thisMonth: currentDateObject.months === currentMonth,
-			// };
-
-			// formateDateObject(currentDate.toObject());
-
+		while (currentDate <= lastDate) {
 			const formated = formateDateObject(currentDate.toObject());
 
 			weekDates.push(formated);
-
-			// weekDates.push(currentDate);
-
-			const pushWeekDates = () => {
-				allDates.push({ dates: weekDates });
-				weekDates = [];
-				weekCounter = 0;
-			};
-
-			if (nextDate.date() === lastDate.date()) {
-				//add last week which might include months from another month
-
-				for (let i = 0; i < 7; i++) {
-					const dateObject = now.endOf("month").month(currentMonth).weekday(i);
-
-					const formated = formateDateObject(dateObject.toObject());
-
-					weekDates.push(formated);
-
-					// weekDates.push(now.endOf("month").month(currentMonth).weekday(i));
-				}
-				pushWeekDates();
-			}
 
 			if (weekCounter === 7) {
 				pushWeekDates();
@@ -168,8 +139,8 @@ const Calendar = () => {
 	}, [currentMonth]);
 
 	//TODO
-	//1. musim ukladat do toho arrayOfDays jestli to je predchozi mesic
 	//2. musim nejak globalne pridavat data do toho calendare
+	//FINISHED. musim ukladat do toho arrayOfDays jestli to je predchozi mesic
 
 	return (
 		<div className="calendar">
