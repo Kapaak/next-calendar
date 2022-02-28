@@ -14,20 +14,20 @@ const Calendar = () => {
 	dayjs.extend(objectPlugin);
 	dayjs.extend(isTodayPlugin);
 
-	const [currentMonth, setCurrentMonth] = useState(now.get("month"));
-	const [selectedData, setSelectedDate] = useState();
+	const [currentMonth, setCurrentMonth] = useState(now);
+	const [selectedDate, setSelectedDate] = useState();
 	const [arrayOfDays, setArrayOfDays] = useState([]);
 
 	const onDateClick = day => {};
 
 	const nextMonth = () => {
-		const plus = now.month(currentMonth).add(1, "month").month();
+		let plus = currentMonth.add(1, "month");
 
 		setCurrentMonth(plus);
 	};
 
 	const prevMonth = () => {
-		const minus = now.month(currentMonth).subtract(1, "month").month();
+		const minus = currentMonth.subtract(1, "month");
 
 		setCurrentMonth(minus);
 	};
@@ -43,7 +43,7 @@ const Calendar = () => {
 					</div>
 				</div>
 				<div className="col col-center">
-					<span>{now.month(currentMonth).format(dateFormat)}</span>
+					<span>{currentMonth.format(dateFormat)}</span>
 				</div>
 				<div className="col col-end" onClick={() => nextMonth()}>
 					<div className="icon">chevron_right</div>
@@ -102,7 +102,7 @@ const Calendar = () => {
 			day: clonedObject.date,
 			month: clonedObject.months,
 			year: clonedObject.years,
-			isCurrentMonth: clonedObject.months === currentMonth,
+			isCurrentMonth: clonedObject.months === currentMonth.month(),
 			isCurrentDay: date.isToday(),
 		};
 
@@ -110,13 +110,12 @@ const Calendar = () => {
 	};
 
 	const getAllDays = () => {
-		let currentDate = now.startOf("month").month(currentMonth).weekday(0);
-		const nextMonth = now.month(currentMonth).add(1, "month").month();
+		let currentDate = currentMonth.startOf("month").weekday(0);
+		const nextMonth = currentMonth.add(1, "month").month();
 
 		let allDates = [];
 		let weekDates = [];
 
-		// let j = 0;
 		let weekCounter = 1;
 
 		const pushWeekDates = () => {
@@ -136,9 +135,7 @@ const Calendar = () => {
 				pushWeekDates();
 			}
 
-			// j++;
 			weekCounter++;
-			// currentDate = now.startOf("month").month(currentMonth).weekday(j);
 			currentDate = currentDate.add(1, "day");
 		}
 
