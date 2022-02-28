@@ -23,15 +23,11 @@ const Calendar = () => {
 	const nextMonth = () => {
 		const plus = now.month(currentMonth).add(1, "month").month();
 
-		console.log(plus, "plus");
-
 		setCurrentMonth(plus);
 	};
 
 	const prevMonth = () => {
 		const minus = now.month(currentMonth).subtract(1, "month").month();
-
-		console.log(minus, "minus");
 
 		setCurrentMonth(minus);
 	};
@@ -77,7 +73,12 @@ const Calendar = () => {
 		arrayOfDays.forEach((week, index) => {
 			week.dates.forEach((d, i) => {
 				days.push(
-					<div className={`col cell`} key={i}>
+					<div
+						className={`col cell ${
+							!d.isCurrentMonth ? "disabled" : d.isCurrentDay ? "selected" : ""
+						}`}
+						key={i}
+					>
 						<span className="number">{d.day}</span>
 						<span className="bg">{d.day}</span>
 					</div>
@@ -115,7 +116,7 @@ const Calendar = () => {
 		let allDates = [];
 		let weekDates = [];
 
-		let j = 0;
+		// let j = 0;
 		let weekCounter = 1;
 
 		const pushWeekDates = () => {
@@ -135,9 +136,10 @@ const Calendar = () => {
 				pushWeekDates();
 			}
 
-			j++;
+			// j++;
 			weekCounter++;
-			currentDate = now.startOf("month").month(currentMonth).weekday(j);
+			// currentDate = now.startOf("month").month(currentMonth).weekday(j);
+			currentDate = currentDate.add(1, "day");
 		}
 
 		setArrayOfDays(allDates);
